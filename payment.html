@@ -1,1 +1,15 @@
-
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mx-auto max-w-lg mt-16 p-8 bg-white shadow-lg rounded-lg">
+    <h2 class="text-3xl font-bold text-center mb-8">Unlock Unlimited Conversations</h2>
+    <div class="text-center mb-8">
+        <p class="text-lg">You have selected the <span class="font-bold">{{ plan }}</span> plan.</p>
+        <p class="text-2xl font-bold">${{ amount }}</p>
+    </div>
+    <div id="paystack-button-container" class="text-center">
+      <button id="paystack-button" class="bg-green-500 text-white py-3 px-8 rounded-full text-lg hover:bg-green-600">Pay with Paystack</button>
+    </div>
+    <p class="text-center text-gray-500 mt-4">Secure payment powered by Paystack</p>
+</div>
+<script src="https://js.paystack.co/v1/inline.js"></script>
+{% endblock %}
