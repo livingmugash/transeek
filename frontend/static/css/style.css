@@ -1,14 +1,7 @@
-/*
-  AuraTranslate Custom Stylesheet
-  This file complements Tailwind CSS for unique branding and complex animations.
-*/
-
-/* Apply Tailwind's base styles, directives, and components */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Define custom styles within a @layer for better organization */
 @layer base {
     body {
         -webkit-font-smoothing: antialiased;
@@ -17,98 +10,107 @@
 }
 
 @layer components {
-    /* Hero Section with Animated Gradient Wave Background */
-    .hero-section {
-        background: linear-gradient(-45deg, #2c3e50, #34495e, #2c3e50, #3498db);
-        background-size: 400% 400%;
-        animation: gradientBG 15s ease infinite;
-        position: relative;
-        color: white;
-    }
-
-    @keyframes gradientBG {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-
-    /* Auth pages (Login/Signup/Payment) container styling */
-    .auth-container {
-        @apply flex items-center justify-center min-h-[80vh] py-12 px-4;
-    }
-    .auth-card {
-        @apply w-full max-w-md bg-white p-8 rounded-lg shadow-2xl;
-    }
-
-    /* Form Styling */
-    .form-group {
-        @apply mb-5;
-    }
-    .form-label {
-        @apply block text-sm font-bold mb-2 text-dark-text;
-    }
-    .form-input {
-        @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition;
-    }
-    .form-button {
-        @apply w-full bg-accent text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-600 transition-transform transform hover:scale-105 disabled:bg-gray-400;
-    }
-    .form-error {
-        @apply bg-danger/10 border border-danger text-danger text-sm p-3 rounded-lg;
-    }
-
-    /* Feature items on landing page */
-    .feature-item {
-        @apply transition-transform transform hover:-translate-y-2;
+    /* Main Action Button Styling */
+    .action-button {
+        @apply bg-sky-blue text-luxury-black font-bold text-lg py-4 px-8 rounded-lg inline-block
+               transition-all duration-300 ease-in-out
+               transform hover:scale-105 hover:shadow-2xl hover:shadow-sky-blue/20;
     }
     
-    /* Pricing Card Styling */
-    .pricing-card {
-        @apply w-full md:w-1/3 lg:w-1/4 p-8 bg-white rounded-xl shadow-lg text-center transition-all transform hover:shadow-2xl hover:scale-105 relative;
+    /* Form Styling */
+    .auth-container {
+        @apply min-h-[80vh] flex items-center justify-center p-4;
     }
-    .pricing-card.popular {
-        @apply bg-primary text-white scale-105;
+    .auth-card {
+        @apply w-full max-w-md bg-dark-gray p-8 rounded-xl border border-medium-gray;
     }
-    .popular-badge {
-        @apply bg-accent text-xs font-bold py-1 px-4 rounded-full absolute -top-4 left-1/2 -translate-x-1/2;
+    .form-group {
+        @apply mb-6;
     }
-    .pricing-btn {
-        @apply bg-accent/20 text-accent font-bold py-2 px-8 rounded-lg w-full inline-block hover:bg-accent hover:text-white transition;
+    .form-input {
+        @apply w-full bg-medium-gray border-2 border-medium-gray text-dazzling-white text-lg px-4 py-3 rounded-lg 
+               focus:outline-none focus:border-sky-blue transition-colors duration-300;
     }
-     .pricing-btn-popular {
-        @apply bg-white text-accent font-bold py-2 px-8 rounded-lg w-full inline-block hover:bg-gray-200 transition;
+    .form-error {
+        @apply bg-red-900/50 border border-red-500 text-white text-sm p-3 rounded-lg mb-6;
     }
+    
+    /* Background Grid Pattern for Hero */
+    .bg-grid-pattern {
+        background-image:
+            linear-gradient(to right, theme('colors.medium-gray') 1px, transparent 1px),
+            linear-gradient(to bottom, theme('colors.medium-gray') 1px, transparent 1px);
+        background-size: 4rem 4rem;
+    }
+    
+    /* AI Core Animation on Dashboard */
+    .ai-core-anim {
+        @apply w-12 h-12 bg-sky-blue rounded-full relative mx-auto;
+        animation: pulse 2s infinite ease-in-out;
+    }
+    .ai-core-anim::before, .ai-core-anim::after {
+        content: '';
+        @apply absolute inset-0 rounded-full border-2 border-sky-blue;
+        animation: ripple 2s infinite ease-out;
+    }
+    .ai-core-anim::after {
+        animation-delay: -1s;
+    }
+
+    /* Sound Wave Animation */
+    .sound-wave {
+        @apply flex justify-center items-center h-12;
+    }
+    .sound-wave > div {
+        @apply w-1 h-3 bg-sky-blue rounded-full mx-0.5;
+        animation: wave 1.2s infinite ease-in-out;
+    }
+    .sound-wave > div:nth-child(2) { animation-delay: -1.1s; }
+    .sound-wave > div:nth-child(3) { animation-delay: -1.0s; }
+    .sound-wave > div:nth-child(4) { animation-delay: -0.9s; }
+    .sound-wave > div:nth-child(5) { animation-delay: -0.8s; }
 }
 
-/* Custom Animations */
+/* --- KEYFRAME ANIMATIONS --- */
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 @keyframes fade-in-down {
-    0% {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    0% { opacity: 0; transform: translateY(-20px); }
+    100% { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fade-in-up {
-    0% {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
 }
 
-.animate-fade-in-down {
-    animation: fade-in-down 0.8s ease-out forwards;
+@keyframes fade-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
 }
 
-.animate-fade-in-up {
-    animation: fade-in-up 0.8s ease-out 0.2s forwards;
-    opacity: 0; /* Start hidden */
+.animate-fade-in-down { animation: fade-in-down 0.8s ease-out forwards; }
+.animate-fade-in-up { animation: fade-in-up 0.8s ease-out 0.2s forwards; opacity: 0; }
+.animate-fade-in { animation: fade-in 0.5s ease-in-out forwards; }
+
+
+@keyframes pulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 169, 255, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(0, 169, 255, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 169, 255, 0); }
 }
 
+@keyframes ripple {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(2); opacity: 0; }
+}
+
+@keyframes wave {
+    0%, 40%, 100% { transform: scaleY(0.4); }
+    20% { transform: scaleY(1.0); }
+}
