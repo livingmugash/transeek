@@ -1,77 +1,223 @@
-{% extends 'base.html' %}
-{% block content %}
-<header class="bg-blue-50 py-20 text-center">
-    <div class="container mx-auto">
-        <h1 class="text-5xl font-bold text-gray-800">Speak Your Language. Be Understood in Theirs.</h1>
-        <p class="text-xl text-gray-600 mt-4">Real-time, voice-mimicking translation for seamless global conversations.</p>
-        <a href="/signup" class="bg-blue-600 text-white py-3 px-8 rounded-full text-lg mt-8 inline-block hover:bg-blue-700">Start Your 3 Free Calls Now</a>
-    </div>
-</header>
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraTranslate - Real-time Voice Translation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 'sans': ['Lato', 'sans-serif'], 'display': ['Poppins', 'sans-serif'] },
+                    colors: { 'primary': '#2c3e50', 'accent': '#3498db', 'light-gray': '#ecf0f1', 'dark-text': '#34495e', 'success': '#2ecc71', 'danger': '#e74c3c' }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-light-gray font-sans text-dark-text">
 
-<section class="py-16">
-    <div class="container mx-auto text-center">
-        <h2 class="text-4xl font-bold">How It Works</h2>
-        <div class="flex flex-wrap justify-center mt-8">
-            <div class="w-full md:w-1/3 p-4">
-                <div class="bg-white p-8 rounded-lg shadow-lg">
-                    <h3 class="text-2xl font-bold mb-4">Start a Call</h3>
-                    <p>Use AuraTranslate for any phone or video call.</p>
-                </div>
+    <!-- Header Navigation -->
+    <nav class="bg-primary p-4 text-white sticky top-0 z-50 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#" data-page="page-landing" class="nav-link font-display font-bold text-2xl">AuraTranslate</a>
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-button" class="md:hidden">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+            <!-- Desktop Menu -->
+            <div id="desktop-menu" class="hidden md:flex items-center space-x-4">
+                <a href="#login" data-page="page-login" class="nav-link py-2 px-3 hover:text-accent transition">Login</a>
+                <a href="#signup" data-page="page-signup" class="nav-link bg-accent text-white font-bold py-2 px-4 rounded hover:bg-blue-600 transition">Start Free Trial</a>
             </div>
-            <div class="w-full md:w-1/3 p-4">
-                <div class="bg-white p-8 rounded-lg shadow-lg">
-                    <h3 class="text-2xl font-bold mb-4">Speak Naturally</h3>
-                    <p>Our AI handles the translation in the background.</p>
-                </div>
+             <!-- Authenticated User Menu (Initially Hidden) -->
+            <div id="auth-menu" class="hidden md:flex items-center space-x-4">
+                <span id="user-greeting" class="font-semibold"></span>
+                <a href="#" id="logout-btn" class="py-2 px-3 hover:text-accent transition">Logout</a>
             </div>
-            <div class="w-full md:w-1/3 p-4">
-                <div class="bg-white p-8 rounded-lg shadow-lg">
-                    <h3 class="text-2xl font-bold mb-4">Connect Seamlessly</h3>
-                    <p>Hear the other person in your language, in their voice.</p>
+        </div>
+         <!-- Mobile Menu (Initially Hidden) -->
+        <div id="mobile-menu" class="hidden md:hidden mt-3">
+            <a href="#login" data-page="page-login" class="nav-link block py-2 px-4 text-sm hover:bg-gray-700 rounded">Login</a>
+            <a href="#signup" data-page="page-signup" class="nav-link block py-2 px-4 text-sm hover:bg-gray-700 rounded">Start Free Trial</a>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Landing Page Section -->
+        <div id="page-landing" class="page-section">
+            <header class="text-center py-20 px-4 hero-section">
+                <div class="relative z-10">
+                    <h1 class="text-4xl md:text-6xl font-display font-bold text-white mb-4 animate-fade-in-down">Speak Your Mind. Hear Theirs. Instantly.</h1>
+                    <p class="text-lg md:text-xl max-w-3xl mx-auto mb-8 text-gray-200 animate-fade-in-up">The world's first real-time voice translator that preserves the sound of you. Break language barriers, not connections.</p>
+                    <a href="#signup" data-page="page-signup" class="nav-link bg-accent text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-blue-600 transition-transform transform hover:scale-105">Start Your Free Trial</a>
+                    <p class="text-sm mt-2 text-gray-300">3 free sessions, no credit card required.</p>
+                </div>
+            </header>
+
+            <section id="features" class="py-20 px-4 bg-white">
+                <div class="container mx-auto grid md:grid-cols-3 gap-12 text-center">
+                    <div class="feature-item p-6">
+                        <h3 class="text-2xl font-display font-bold mb-3 text-primary">Your Voice, Their Language</h3>
+                        <p>Our AI doesn't just translate words; it carries the unique character of your voice to the other side.</p>
+                    </div>
+                    <div class="feature-item p-6">
+                        <h3 class="text-2xl font-display font-bold mb-3 text-primary">Truly Real-Time</h3>
+                        <p>Experience conversations that flow naturally, with sub-second latency that eliminates awkward pauses.</p>
+                    </div>
+                    <div class="feature-item p-6">
+                        <h3 class="text-2xl font-display font-bold mb-3 text-primary">Context is Everything</h3>
+                        <p>From professional jargon to casual slang, our AI understands the real meaning behind your words.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="demo" class="bg-light-gray py-20 px-4">
+                <div class="container mx-auto text-center">
+                    <h2 class="text-3xl font-display font-bold text-primary mb-8">See the Magic in Action</h2>
+                    <div class="aspect-w-16 aspect-h-9 max-w-4xl mx-auto bg-gray-800 rounded-lg shadow-2xl flex items-center justify-center overflow-hidden">
+                         <p class="text-white text-2xl font-semibold">YouTube Video Demo Placeholder</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="pricing" class="py-20 px-4 bg-white">
+                <div class="container mx-auto">
+                    <h2 class="text-3xl font-display font-bold text-center text-primary mb-12">Simple, Transparent Pricing</h2>
+                    <div class="flex flex-wrap justify-center items-center gap-8">
+                        <div class="pricing-card">
+                            <h3 class="font-display text-2xl font-bold mb-4">Monthly</h3>
+                            <p class="text-4xl font-bold mb-2">$10<span class="text-lg font-normal">/mo</span></p>
+                            <p class="mb-6 h-12">Unlimited use, cancel anytime.</p>
+                            <a href="#payment?plan=monthly" data-page="page-payment" class="nav-link pricing-btn">Choose Plan</a>
+                        </div>
+                        <div class="pricing-card popular">
+                            <p class="popular-badge">Most Popular</p>
+                            <h3 class="font-display text-2xl font-bold mb-4">Yearly</h3>
+                            <p class="text-4xl font-bold mb-2">$70<span class="text-lg font-normal">/yr</span></p>
+                            <p class="mb-6 h-12">Save over 40%! The best value for seamless communication.</p>
+                            <a href="#payment?plan=yearly" data-page="page-payment" class="nav-link pricing-btn-popular">Choose Plan</a>
+                        </div>
+                        <div class="pricing-card">
+                            <h3 class="font-display text-2xl font-bold mb-4">Enterprise</h3>
+                            <p class="text-4xl font-bold mb-2">Custom</p>
+                            <p class="mb-6 h-12">Bespoke solutions for teams and businesses.</p>
+                            <a href="#" class="nav-link pricing-btn">Contact Sales</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Signup Page Section -->
+        <div id="page-signup" class="page-section hidden">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <div class="text-center mb-8">
+                        <a href="#" data-page="page-landing" class="nav-link font-display font-bold text-3xl text-primary">AuraTranslate</a>
+                        <h2 class="text-2xl font-display font-semibold mt-4 text-dark-text">Create Your Free Account</h2>
+                    </div>
+                    <form id="signup-form" novalidate>
+                        <div id="signup-form-error" class="form-error hidden"></div>
+                        <div class="form-group">
+                            <label for="signup-username" class="form-label">Username</label>
+                            <input type="text" id="signup-username" name="username" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-email" class="form-label">Email</label>
+                            <input type="email" id="signup-email" name="email" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-password" class="form-label">Password</label>
+                            <input type="password" id="signup-password" name="password" class="form-input" required>
+                        </div>
+                        <button type="submit" id="signup-submit-btn" class="form-button">Create Account</button>
+                    </form>
+                    <p class="text-center text-sm mt-6">Already have an account? <a href="#login" data-page="page-login" class="nav-link text-accent hover:underline">Log in</a></p>
                 </div>
             </div>
         </div>
-    </div>
-</section>
 
-<section class="bg-gray-100 py-16">
-    <div class="container mx-auto text-center">
-        <h2 class="text-4xl font-bold">See AuraTranslate in Action</h2>
-        <div class="mt-8">
-            <div class="bg-black aspect-w-16 aspect-h-9 rounded-lg shadow-lg flex items-center justify-center">
-                <p class="text-white text-2xl">YouTube Video Placeholder</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="py-16">
-    <div class="container mx-auto text-center">
-        <h2 class="text-4xl font-bold">Choose Your Plan</h2>
-        <div class="flex flex-wrap justify-center mt-8">
-            <div class="w-full md:w-1/3 p-4">
-                <div class="bg-white p-8 rounded-lg shadow-lg border-2 border-blue-500">
-                    <h3 class="text-2xl font-bold mb-4">Monthly</h3>
-                    <p class="text-4xl font-bold">$10<span class="text-lg">/month</span></p>
-                    <a href="/payment?plan=monthly" class="bg-blue-600 text-white py-2 px-8 rounded-full mt-6 inline-block hover:bg-blue-700">Choose Plan</a>
-                </div>
-            </div>
-            <div class="w-full md:w-1/3 p-4">
-                <div class="bg-white p-8 rounded-lg shadow-lg">
-                    <h3 class="text-2xl font-bold mb-4">Yearly</h3>
-                    <p class="text-4xl font-bold">$70<span class="text-lg">/year</span></p>
-                    <p class="text-green-500 font-bold">Save 40%!</p>
-                    <a href="/payment?plan=yearly" class="bg-blue-600 text-white py-2 px-8 rounded-full mt-6 inline-block hover:bg-blue-700">Choose Plan</a>
-                </div>
-            </div>
-            <div class="w-full md:w-1/3 p-4">
-                <div class="bg-white p-8 rounded-lg shadow-lg">
-                    <h3 class="text-2xl font-bold mb-4">Enterprise</h3>
-                    <p class="text-lg">Custom solutions for your business.</p>
-                    <a href="#" class="bg-gray-600 text-white py-2 px-8 rounded-full mt-6 inline-block hover:bg-gray-700">Contact Us</a>
+        <!-- Login Page Section -->
+        <div id="page-login" class="page-section hidden">
+             <div class="auth-container">
+                <div class="auth-card">
+                    <div class="text-center mb-8">
+                        <a href="#" data-page="page-landing" class="nav-link font-display font-bold text-3xl text-primary">AuraTranslate</a>
+                        <h2 class="text-2xl font-display font-semibold mt-4 text-dark-text">Welcome Back</h2>
+                    </div>
+                    <form id="login-form" novalidate>
+                        <div id="login-form-error" class="form-error hidden"></div>
+                        <div class="form-group">
+                            <label for="login-email" class="form-label">Email</label>
+                            <input type="email" id="login-email" name="email" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password" class="form-label">Password</label>
+                            <input type="password" id="login-password" name="password" class="form-input" required>
+                        </div>
+                        <button type="submit" id="login-submit-btn" class="form-button">Log In</button>
+                    </form>
+                    <p class="text-center text-sm mt-6">Don't have an account? <a href="#signup" data-page="page-signup" class="nav-link text-accent hover:underline">Sign up for free</a></p>
                 </div>
             </div>
         </div>
-    </div>
-</section>
-{% endblock %}
+
+        <!-- Payment Page Section -->
+        <div id="page-payment" class="page-section hidden">
+            <div class="auth-container">
+                <div class="w-full max-w-lg bg-white p-8 rounded-lg shadow-lg">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-display font-bold text-primary">Upgrade Your Plan</h2>
+                        <p class="text-dark-text mt-2">Unlock unlimited real-time translation.</p>
+                    </div>
+                    <div id="payment-details" class="mb-6 border-b pb-6"></div>
+                    <div class="text-center">
+                        <button id="pay-btn" class="w-full bg-accent text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-600 transition text-lg">Proceed to Secure Payment</button>
+                        <div id="payment-form-error" class="form-error hidden mt-4"></div>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <p class="text-sm text-gray-500">Secure payments powered by Paystack</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="page-dashboard" class="page-section hidden">
+            <div class="container mx-auto mt-12 p-4 text-center">
+                <div class="bg-white p-8 rounded-lg shadow-lg max-w-2xl mx-auto">
+                     <h2 class="text-3xl font-display font-bold text-primary mb-4" id="welcome-message">Loading...</h2>
+                     <div id="status-message" class="text-lg mb-8"></div>
+                     <div class="mt-8 border-t pt-8">
+                        <h3 class="text-2xl font-display font-bold text-primary mb-4">Start a New Session</h3>
+                        <p class="mb-6">Click the button below to conceptually begin a real-time translated call.</p>
+                        <button id="start-call-btn" class="bg-accent text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-blue-600 transition disabled:bg-gray-400 disabled:cursor-not-allowed">
+                            Start Translated Call
+                        </button>
+                        <div id="trial-usage-message" class="text-sm mt-4 text-gray-600"></div>
+                     </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-primary text-white p-6">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2025 AuraTranslate. All Rights Reserved.</p>
+            <div class="mt-2">
+                <a href="#" class="px-2 hover:text-accent">Privacy Policy</a> |
+                <a href="#" class="px-2 hover:text-accent">Terms of Service</a> |
+                <a href="#" class="px-2 hover:text-accent">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
