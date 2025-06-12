@@ -30,18 +30,24 @@ document.addEventListener('DOMContentLoaded', function () {
         return response.status === 204 ? null : await response.json();
     }
 
-    // --- Page Specific Logic ---
-    // Determine current page based on body/main element IDs
-    const mainElement = document.body.querySelector('main');
-    if (mainElement && mainElement.id === 'main-content') {
-        // We are on index.html
+    // --- Page Specific Logic Determination ---
+    // Check the current URL path to determine which page logic to run.
+    // Assuming 'index.html' or 'transeek.html' could be the landing page.
+    // '/app' (or whatever your dashboard route will be) is the dashboard.
+    const path = window.location.pathname;
+
+    if (path === '/' || path.includes('/index.html') || path.includes('/transeek.html')) {
+        // This is likely the landing page with login/signup/pricing
         handleLandingPage();
-    } else if (mainElement && mainElement.querySelector('#dashboard-content')) {
-        // We are on transeek.html
+    } else if (path.includes('/app')) { // Adjust '/app' if your dashboard URL is different
+        // This is the dashboard page (transeek.html's original purpose)
         handleDashboardPage();
+    } else {
+        // Fallback for local testing or unhandled paths, assume landing
+        handleLandingPage();
     }
 
-    // Logic for index.html
+    // Logic for the Landing Page (index.html or transeek.html if it's acting as landing)
     function handleLandingPage() {
         const mainContent = document.getElementById('main-content');
         
@@ -57,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (template) {
                 mainContent.innerHTML = ''; // Clear previous content
                 mainContent.appendChild(template.content.cloneNode(true));
-                // Bind event listeners AFTER the content is rendered
+                // Bind event listeners AFTER the content is rendered for dynamic elements
                 bindEventListenersForView(hash);
             }
         }
@@ -79,8 +85,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 if(signupForm) signupForm.addEventListener('submit', handleSignup);
                 
                 // Hero button on landing page to sign up
-                const heroSignupBtn = mainContent.querySelector('#hero-signup-btn');
-                if(heroSignupBtn) heroSignupBtn.addEventListener('click', (e) => { e.preventDefault(); renderView('#signup'); });
+                // Using a more generic selector for the "Start Your Free Trial" buttons
+                const heroSignupButtons = mainContent.querySelectorAll('.action-button.nav-link[data-view="signup"]');
+                heroSignupButtons.forEach(button => {
+                    button.addEventListener('click', (e) => { 
+                        e.preventDefault();
+                        window.location.hash = '#signup';
+                    });
+                });
 
                 // Pricing card buttons to sign up
                 const pricingButtons = mainContent.querySelectorAll('.pricing-btn, .pricing-btn-popular');
@@ -100,7 +112,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         faqItem.classList.toggle('open');
                         const answer = faqItem.querySelector('.faq-answer');
                         if (answer) {
-                            answer.style.maxHeight = faqItem.classList.contains('open') ? answer.scrollHeight + 'px' : '0';
+                            // Reset max-height to 0 before setting, to trigger transition on close
+                            answer.style.maxHeight = '0'; 
+                            if (faqItem.classList.contains('open')) {
+                                answer.style.maxHeight = answer.scrollHeight + 'px';
+                            }
                         }
                     }
                 });
@@ -108,6 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         
         // Global navigation button listeners (these are always in the DOM, not dynamic templates)
+        // These are assumed to be in the main HTML file itself, not inside templates.
         const navLoginBtn = document.getElementById('nav-login-btn');
         const navSignupBtn = document.getElementById('nav-signup-btn');
         const mobileNavLoginBtn = document.getElementById('mobile-nav-login-btn');
@@ -128,12 +145,11 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-
         window.addEventListener('hashchange', () => renderView(window.location.hash));
         renderView(window.location.hash); // Initial render based on URL hash
     }
 
-    // Logic for transeek.html (Dashboard)
+    // Logic for the Dashboard Page (e.g., /app/ or transeek.html if it's specifically the dashboard)
     function handleDashboardPage() {
         apiRequest('/api/user-status/')
             .then(data => {
@@ -186,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         try {
             await apiRequest(endpoint, 'POST', data);
-            window.location.href = '/app'; // Redirect to the main app page (transeek.html)
+            window.location.href = '/app'; // Redirect to the main app page (transeek.html or your dashboard)
         } catch (error) {
             if (errorDiv) { // Check again before trying to set text/class
                 errorDiv.textContent = error.message;
@@ -230,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // No direct HTML changes needed for index.html or transeek.html as per this JS update.
-    // The previous HTML structures (including IDs and classes) are assumed to be correct
-    // to match these JavaScript selectors.
+    // No direct HTML changes needed for index.html or transeek.html beyond
+    // ensuring the main content area (if it exists) has id="main-content"
+    // for the landing page's dynamic rendering.
 });
