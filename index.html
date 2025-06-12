@@ -12,39 +12,35 @@
 </head>
 <body class="bg-luxury-black text-dazzling-white font-sans">
 
-    <!-- Header Navigation -->
     <nav class="sticky top-0 z-50 bg-luxury-black/80 backdrop-blur-lg border-b border-medium-gray">
         <div class="container mx-auto flex justify-between items-center p-4">
             <a href="/" class="font-bold text-2xl tracking-wider">Transeek</a>
             <div class="hidden md:flex items-center space-x-4">
-                <a href="#login" class="py-2 px-4 hover:text-sky-blue transition duration-300 nav-link" data-view="login">Login</a>
-                <a href="#signup" class="bg-sky-blue text-luxury-black font-bold py-2 px-6 rounded-lg hover:bg-light-blue transition duration-300 nav-link" data-view="signup">Sign Up Free</a>
+                <a href="#view-login" class="py-2 px-4 hover:text-sky-blue transition duration-300 nav-link" data-view="login">Login</a>
+                <a href="#view-signup" class="bg-sky-blue text-luxury-black font-bold py-2 px-6 rounded-lg hover:bg-light-blue transition duration-300 nav-link" data-view="signup">Sign Up Free</a>
             </div>
             <button id="mobile-menu-button" class="md:hidden">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
             </button>
         </div>
         <div id="mobile-menu" class="hidden md:hidden p-4">
-             <a href="#login" class="block py-2 px-4 hover:bg-medium-gray rounded nav-link" data-view="login">Login</a>
-             <a href="#signup" class="block mt-2 bg-sky-blue text-luxury-black font-bold py-2 px-4 rounded text-center nav-link" data-view="signup">Sign Up Free</a>
+             <a href="#view-login" class="block py-2 px-4 hover:bg-medium-gray rounded nav-link" data-view="login">Login</a>
+             <a href="#view-signup" class="block mt-2 bg-sky-blue text-luxury-black font-bold py-2 px-4 rounded text-center nav-link" data-view="signup">Sign Up Free</a>
         </div>
     </nav>
 
     <main>
-        <!-- This container holds all the different views -->
         <div id="view-container">
-            <!-- Landing Page Content (Visible by default) -->
             <div id="view-landing" class="view">
                 <header class="text-center py-24 md:py-32 px-4 relative overflow-hidden">
                     <div class="absolute inset-0 bg-grid-pattern opacity-10"></div>
                     <div class="relative z-10">
                         <h1 class="text-5xl md:text-7xl font-bold mb-6 animate-fade-in-down">Your Voice. Any Language.</h1>
                         <p class="text-lg md:text-xl max-w-3xl mx-auto mb-10 text-gray-300 animate-fade-in-up">Experience the world's first real-time translator that preserves the sound of you. Break language barriers, not connections.</p>
-                        <a href="#signup" class="action-button nav-link" data-view="signup">Start Your Free Trial</a>
+                        <a href="#view-signup" class="action-button nav-link" data-view="signup">Start Your Free Trial</a>
                     </div>
                 </header>
 
-                <!-- Pricing Section -->
                 <section id="pricing" class="py-20 px-4 bg-dark-gray">
                     <div class="container mx-auto">
                         <h2 class="text-4xl font-bold text-center mb-12">Find a Plan That's Right For You</h2>
@@ -57,7 +53,7 @@
                                     <li>&#10003; Context-Aware AI</li>
                                     <li>&#10003; Voice-Cloning Enabled</li>
                                 </ul>
-                                <a href="#signup" class="pricing-btn nav-link" data-view="signup">Get Started</a>
+                                <a href="#view-signup" class="pricing-btn nav-link" data-view="signup">Get Started</a>
                             </div>
                             <div class="pricing-card popular">
                                 <p class="popular-badge">Best Value</p>
@@ -69,7 +65,7 @@
                                     <li>&#10003; Voice-Cloning Enabled</li>
                                     <li>&#10003; Priority Support</li>
                                 </ul>
-                                <a href="#signup" class="pricing-btn-popular nav-link" data-view="signup">Choose Yearly</a>
+                                <a href="#view-signup" class="pricing-btn-popular nav-link" data-view="signup">Choose Yearly</a>
                             </div>
                             <div class="pricing-card">
                                 <h3 class="text-2xl font-bold mb-4">Enterprise</h3>
@@ -85,7 +81,6 @@
                     </div>
                 </section>
 
-                <!-- Q&A Section -->
                 <section id="faq" class="py-20 px-4">
                     <div class="container mx-auto max-w-4xl">
                         <h2 class="text-4xl font-bold text-center mb-12">Frequently Asked Questions</h2>
@@ -131,8 +126,7 @@
                 </section>
             </div>
 
-            <!-- Login Form View (Initially Hidden) -->
-            <div id="view-login" class="view hidden">
+            <div id="view-login" class="view">
                 <div class="auth-container animate-fade-in">
                     <div class="auth-card">
                         <h2 class="text-3xl font-bold text-center mb-8">Welcome Back</h2>
@@ -147,14 +141,13 @@
                             <button type="submit" class="action-button w-full">Log In</button>
                         </form>
                         <p class="text-center text-sm mt-6 text-gray-400">
-                            No account? <a href="#signup" class="font-semibold text-sky-blue hover:underline nav-link" data-view="signup">Sign up for free</a>
+                            No account? <a href="#view-signup" class="font-semibold text-sky-blue hover:underline nav-link" data-view="signup">Sign up for free</a>
                         </p>
                     </div>
                 </div>
             </div>
 
-            <!-- Signup Form View (Initially Hidden) -->
-            <div id="view-signup" class="view hidden">
+            <div id="view-signup" class="view">
                  <div class="auth-container animate-fade-in">
                     <div class="auth-card">
                         <h2 class="text-3xl font-bold text-center mb-8">Create Your Account</h2>
@@ -172,7 +165,7 @@
                             <button type="submit" class="action-button w-full">Create Free Account</button>
                         </form>
                         <p class="text-center text-sm mt-6 text-gray-400">
-                            Already have an account? <a href="#login" class="font-semibold text-sky-blue hover:underline nav-link" data-view="login">Log In</a>
+                            Already have an account? <a href="#view-login" class="font-semibold text-sky-blue hover:underline nav-link" data-view="login">Log In</a>
                         </p>
                     </div>
                 </div>
@@ -189,4 +182,3 @@
     <script src="main.js"></script>
 </body>
 </html>
-
