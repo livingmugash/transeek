@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const API_BASE_URL = window.location.origin;
 
-    // --- Helper Functions ---
+    // --- Helper Functions (UNCHANGED) ---
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -31,66 +31,42 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // --- Page Specific Logic Determination ---
-    // Now checking for the presence of #view-container (from index.html) or #dashboard-content (from transeek.html)
+    // Check for presence of #view-container (for index.html) or #dashboard-content (for transeek.html)
     const viewContainer = document.getElementById('view-container');
-    const dashboardContent = document.getElementById('dashboard-content'); // This ID is in transeek.html
+    const dashboardContent = document.getElementById('dashboard-content');
 
     if (viewContainer) {
-        // We are on index.html, which manages multiple views via hidden class
+        // We are on index.html, which now has all views directly visible
         handleLandingPage();
     } else if (dashboardContent) {
         // We are on transeek.html (the dashboard page)
         handleDashboardPage();
     } else {
-        // Fallback or unexpected page structure, assume landing page logic
-        console.warn("Could not determine page type. Defaulting to landing page logic.");
+        // Fallback for local testing or unhandled paths, assuming it's the landing page
+        console.warn("Could not determine page type. Defaulting to landing page logic (index.html).");
         handleLandingPage();
     }
 
-    // Logic for the Landing Page (index.html, which manages #view-landing, #view-login, #view-signup)
+    // --- Simplified Logic for Landing Page (index.html) ---
     function handleLandingPage() {
-        const allViews = document.querySelectorAll('.view'); // Select all view divs
-        
-        function renderView(hash) {
-            // Determine which view to show
-            let targetViewId = 'view-landing'; // Default to landing
-            if (hash === '#login') {
-                targetViewId = 'view-login';
-            } else if (hash === '#signup') {
-                targetViewId = 'view-signup';
-            }
-
-            allViews.forEach(view => {
-                if (view.id === targetViewId) {
-                    view.classList.remove('hidden'); // Show the target view
-                    view.classList.add('animate-fade-in'); // Re-add animation for visual effect
-                } else {
-                    view.classList.add('hidden'); // Hide other views
-                    view.classList.remove('animate-fade-in'); // Remove animation class when hidden
-                }
-            });
+        // --- Form Submissions ---
+        const loginForm = document.getElementById('login-form');
+        if(loginForm) {
+            loginForm.addEventListener('submit', handleLogin);
+            // Ensure error div is hidden initially
+            const errorDiv = loginForm.querySelector('.form-error');
+            if (errorDiv) errorDiv.classList.add('hidden');
         }
         
-        // --- Bind ALL Event Listeners for the Landing Page once on DOMContentLoaded ---
-        // Navigation buttons (in header, static)
-        const navLinks = document.querySelectorAll('.nav-link'); // Select all elements with nav-link class
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                // Get the hash from href attribute or data-view (preferred for clarity)
-                const targetHash = link.getAttribute('href') || `#${link.dataset.view}`;
-                window.location.hash = targetHash;
-            });
-        });
-
-        // Form submissions
-        const loginForm = document.getElementById('login-form');
-        if(loginForm) loginForm.addEventListener('submit', handleLogin);
-        
         const signupForm = document.getElementById('signup-form');
-        if(signupForm) signupForm.addEventListener('submit', handleSignup);
+        if(signupForm) {
+            signupForm.addEventListener('submit', handleSignup);
+            // Ensure error div is hidden initially
+            const errorDiv = signupForm.querySelector('.form-error');
+            if (errorDiv) errorDiv.classList.add('hidden');
+        }
         
-        // FAQ Accordion logic
+        // --- FAQ Accordion Logic ---
         const faqQuestions = document.querySelectorAll('.faq-question');
         faqQuestions.forEach(question => {
             question.addEventListener('click', () => {
@@ -99,7 +75,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     faqItem.classList.toggle('open');
                     const answer = faqItem.querySelector('.faq-answer');
                     if (answer) {
-                        // Reset max-height to '0' before setting, to trigger transition on close
                         if (faqItem.classList.contains('open')) {
                             answer.style.maxHeight = answer.scrollHeight + 'px';
                         } else {
@@ -110,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
 
-        // Mobile Menu Toggle (still global/static elements)
+        // --- Mobile Menu Toggle ---
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
         if(mobileMenuButton && mobileMenu) {
@@ -119,13 +94,12 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        // Initial render based on URL hash
-        renderView(window.location.hash);
-        // Listen for hash changes to re-render view
-        window.addEventListener('hashchange', () => renderView(window.location.hash));
+        // IMPORTANT: No more `renderView` or `window.addEventListener('hashchange')`
+        // for main views as they are now always present.
+        // Navigation links now rely on native browser anchor scrolling.
     }
 
-    // Logic for the Dashboard Page (transeek.html)
+    // --- Logic for the Dashboard Page (transeek.html - UNCHANGED) ---
     function handleDashboardPage() {
         apiRequest('/api/user-status/')
             .then(data => {
@@ -153,20 +127,17 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch((error) => {
                 console.error("User status check failed:", error);
-                // If status check fails, user is not authenticated. Redirect to login on the landing page.
-                window.location.href = `${API_BASE_URL}/#login`;
+                window.location.href = `${API_BASE_URL}/#view-login`; // Redirect to login on index.html
             });
             
-        // Logout button listener for dashboard
         const logoutBtn = document.getElementById('logout-btn');
         if(logoutBtn) logoutBtn.addEventListener('click', handleLogout);
 
-        // Start call button listener for dashboard
         const startCallBtn = document.getElementById('start-call-btn');
         if(startCallBtn) startCallBtn.addEventListener('click', handleUseTrial);
     }
 
-    // --- AUTHENTICATION HANDLERS ---
+    // --- AUTHENTICATION HANDLERS (UNCHANGED, except redirect path for consistency) ---
     async function handleAuth(form, endpoint) {
         const errorDiv = form.querySelector('.form-error');
         const submitBtn = form.querySelector('button[type="submit"]');
@@ -186,7 +157,6 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
             console.error("Auth error:", error);
             if (errorDiv) {
-                // Check if the error object has a 'detail' property for specific messages
                 const errorMessage = error.message || 'An unexpected error occurred.';
                 errorDiv.textContent = errorMessage;
                 errorDiv.classList.remove('hidden');
@@ -212,19 +182,17 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
     
-    // --- Dashboard Specific Handlers ---
+    // --- Dashboard Specific Handlers (UNCHANGED) ---
     async function handleUseTrial(e) {
         const btn = e.currentTarget;
         btn.disabled = true;
         try {
             await apiRequest('/api/use-trial/', 'POST');
-            // Reload to show updated count (backend has decremented)
             window.location.reload();
         } catch(error) {
             alert(`Failed to start call: ${error.message}`);
             console.error("Use trial error:", error);
         } finally {
-            // Re-enable only if reload doesn't happen (e.g., in case of error)
             btn.disabled = false;
         }
     }
