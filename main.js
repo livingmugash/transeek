@@ -31,15 +31,17 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // --- Page Specific Logic ---
-    const page = document.body.querySelector('main');
-    if (page.id === 'main-content') {
+    // Determine current page based on body/main element IDs
+    const mainElement = document.body.querySelector('main');
+    if (mainElement && mainElement.id === 'main-content') {
         // We are on index.html
         handleLandingPage();
-    } else if (page.querySelector('#dashboard-content')) {
+    } else if (mainElement && mainElement.querySelector('#dashboard-content')) {
         // We are on transeek.html
         handleDashboardPage();
     }
 
+    // Logic for index.html
     function handleLandingPage() {
         const mainContent = document.getElementById('main-content');
         
@@ -55,41 +57,83 @@ document.addEventListener('DOMContentLoaded', function () {
             if (template) {
                 mainContent.innerHTML = ''; // Clear previous content
                 mainContent.appendChild(template.content.cloneNode(true));
+                // Bind event listeners AFTER the content is rendered
                 bindEventListenersForView(hash);
             }
         }
         
         function bindEventListenersForView(hash){
-            if (hash === '#login' || hash === ''){
+            // Listeners for login/signup forms within the dynamically loaded content
+            if (hash === '#login' || hash === ''){ // If landing or login view is active
                 const switchToSignup = mainContent.querySelector('#login-switch-to-signup');
-                if(switchToSignup) switchToSignup.addEventListener('click', () => renderView('#signup'));
+                if(switchToSignup) switchToSignup.addEventListener('click', (e) => { e.preventDefault(); renderView('#signup'); });
                 
                 const loginForm = mainContent.querySelector('#login-form');
                 if(loginForm) loginForm.addEventListener('submit', handleLogin);
             }
-            if (hash === '#signup' || hash === ''){
+            if (hash === '#signup' || hash === ''){ // If landing or signup view is active
                 const switchToLogin = mainContent.querySelector('#signup-switch-to-login');
-                if(switchToLogin) switchToLogin.addEventListener('click', () => renderView('#login'));
+                if(switchToLogin) switchToLogin.addEventListener('click', (e) => { e.preventDefault(); renderView('#login'); });
                 
                 const signupForm = mainContent.querySelector('#signup-form');
                 if(signupForm) signupForm.addEventListener('submit', handleSignup);
                 
+                // Hero button on landing page to sign up
                 const heroSignupBtn = mainContent.querySelector('#hero-signup-btn');
-                if(heroSignupBtn) heroSignupBtn.addEventListener('click', () => renderView('#signup'));
+                if(heroSignupBtn) heroSignupBtn.addEventListener('click', (e) => { e.preventDefault(); renderView('#signup'); });
+
+                // Pricing card buttons to sign up
+                const pricingButtons = mainContent.querySelectorAll('.pricing-btn, .pricing-btn-popular');
+                pricingButtons.forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        window.location.hash = '#signup'; // Direct hash change for consistency
+                    });
+                });
             }
+            // FAQ Accordion logic (if present in the current view)
+            const faqQuestions = mainContent.querySelectorAll('.faq-question');
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', () => {
+                    const faqItem = question.closest('.faq-item');
+                    if (faqItem) {
+                        faqItem.classList.toggle('open');
+                        const answer = faqItem.querySelector('.faq-answer');
+                        if (answer) {
+                            answer.style.maxHeight = faqItem.classList.contains('open') ? answer.scrollHeight + 'px' : '0';
+                        }
+                    }
+                });
+            });
         }
         
-        // Navigation button listeners
-        document.getElementById('nav-login-btn').addEventListener('click', (e) => { e.preventDefault(); window.location.hash = '#login'; });
-        document.getElementById('nav-signup-btn').addEventListener('click', (e) => { e.preventDefault(); window.location.hash = '#signup'; });
-        document.getElementById('mobile-nav-login-btn').addEventListener('click', (e) => { e.preventDefault(); window.location.hash = '#login'; });
-        document.getElementById('mobile-nav-signup-btn').addEventListener('click', (e) => { e.preventDefault(); window.location.hash = '#signup'; });
+        // Global navigation button listeners (these are always in the DOM, not dynamic templates)
+        const navLoginBtn = document.getElementById('nav-login-btn');
+        const navSignupBtn = document.getElementById('nav-signup-btn');
+        const mobileNavLoginBtn = document.getElementById('mobile-nav-login-btn');
+        const mobileNavSignupBtn = document.getElementById('mobile-nav-signup-btn');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+
+        if(navLoginBtn) navLoginBtn.addEventListener('click', (e) => { e.preventDefault(); window.location.hash = '#login'; });
+        if(navSignupBtn) navSignupBtn.addEventListener('click', (e) => { e.preventDefault(); window.location.hash = '#signup'; });
+        if(mobileNavLoginBtn) mobileNavLoginBtn.addEventListener('click', (e) => { e.preventDefault(); window.location.hash = '#login'; });
+        if(mobileNavSignupBtn) mobileNavSignupBtn.addEventListener('click', (e) => { e.preventDefault(); window.location.hash = '#signup'; });
+        
+        // Mobile Menu Toggle - kept here as these elements are static
+        if(mobileMenuButton) {
+            mobileMenuButton.addEventListener('click', () => {
+                if(mobileMenu) mobileMenu.classList.toggle('hidden');
+            });
+        }
 
 
         window.addEventListener('hashchange', () => renderView(window.location.hash));
-        renderView(window.location.hash); // Initial render
+        renderView(window.location.hash); // Initial render based on URL hash
     }
 
+    // Logic for transeek.html (Dashboard)
     function handleDashboardPage() {
         apiRequest('/api/user-status/')
             .then(data => {
@@ -115,9 +159,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }
             })
-            .catch(() => {
+            .catch((error) => {
+                console.error("User status check failed:", error); // Log error for debugging
                 // If status check fails, user is not authenticated. Redirect to login.
-                window.location.href = '/#login';
+                // Ensure full path for reliability when redirecting to root with hash
+                window.location.href = `${API_BASE_URL}/#login`;
             });
             
         document.getElementById('logout-btn').addEventListener('click', handleLogout);
@@ -129,21 +175,27 @@ document.addEventListener('DOMContentLoaded', function () {
         const errorDiv = form.querySelector('.form-error');
         const submitBtn = form.querySelector('button[type="submit"]');
         
-        errorDiv.classList.add('hidden');
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Processing...';
+        if (errorDiv) errorDiv.classList.add('hidden'); // Ensure errorDiv exists before manipulating
+        if (submitBtn) { // Ensure submitBtn exists
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+        }
 
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
 
         try {
             await apiRequest(endpoint, 'POST', data);
-            window.location.href = '/app'; // Redirect to the main app page
+            window.location.href = '/app'; // Redirect to the main app page (transeek.html)
         } catch (error) {
-            errorDiv.textContent = error.message;
-            errorDiv.classList.remove('hidden');
-            submitBtn.disabled = false;
-            submitBtn.textContent = form.id === 'login-form' ? 'Log In' : 'Create Free Account';
+            if (errorDiv) { // Check again before trying to set text/class
+                errorDiv.textContent = error.message;
+                errorDiv.classList.remove('hidden');
+            }
+            if (submitBtn) { // Check again before manipulating
+                submitBtn.disabled = false;
+                submitBtn.textContent = form.id === 'login-form' ? 'Log In' : 'Create Free Account';
+            }
         }
     }
 
@@ -154,33 +206,31 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault();
         try {
             await apiRequest('/api/logout/', 'POST');
-            window.location.href = '/';
+            window.location.href = '/'; // Redirect to landing page root
         } catch (error) {
             alert('Logout failed. Please try again.');
+            console.error("Logout error:", error); // Log for debugging
         }
     }
     
     // --- Dashboard Specific Handlers ---
     async function handleUseTrial(e) {
         const btn = e.currentTarget;
-        btn.disabled = true;
+        btn.disabled = true; // Disable button immediately
         try {
-             await apiRequest('/api/use-trial/', 'POST');
-             // Reload to show updated count
-             window.location.reload();
+            await apiRequest('/api/use-trial/', 'POST');
+            // Reload to show updated count (backend has decremented)
+            window.location.reload();
         } catch(error) {
-            alert(error.message);
+            alert(`Failed to start call: ${error.message}`);
+            console.error("Use trial error:", error); // Log for debugging
         } finally {
+            // Re-enable only if reload doesn't happen (e.g., in case of error)
             btn.disabled = false;
         }
     }
-    
-    // Mobile Menu Toggle
-    const mobileMenuButton = document.getElementById('mobile-menu-button');
-    const mobileMenu = document.getElementById('mobile-menu');
-    if(mobileMenuButton) {
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-    }
+
+    // No direct HTML changes needed for index.html or transeek.html as per this JS update.
+    // The previous HTML structures (including IDs and classes) are assumed to be correct
+    // to match these JavaScript selectors.
 });
