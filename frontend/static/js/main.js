@@ -1,18 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // --- Application State and Configuration ---
     const API_BASE_URL = window.location.origin;
-    const state = {
-        isAuthenticated: false,
-        user: null,
-    };
-
-    // --- DOM Element References ---
-    const pages = document.querySelectorAll('.page-section');
-    const navLinks = document.querySelectorAll('.nav-link');
-    const desktopMenu = document.getElementById('desktop-menu');
-    const authMenu = document.getElementById('auth-menu');
-    const mobileMenuButton = document.getElementById('mobile-menu-button');
-    const mobileMenu = document.getElementById('mobile-menu');
 
     // --- Helper Functions ---
     function getCookie(name) {
@@ -43,110 +30,103 @@ document.addEventListener('DOMContentLoaded', function () {
         return response.status === 204 ? null : await response.json();
     }
 
-    // --- UI and Navigation ---
-    function showPage(pageId) {
-        pages.forEach(page => {
-            page.classList.toggle('hidden', page.id !== pageId);
-        });
-        window.scrollTo(0, 0);
+    // --- Page Specific Logic ---
+    const page = document.body.querySelector('main');
+    if (page.id === 'main-content') {
+        // We are on index.html
+        handleLandingPage();
+    } else if (page.querySelector('#dashboard-content')) {
+        // We are on transeek.html
+        handleDashboardPage();
     }
 
-    function updateNavUI() {
-        if (state.isAuthenticated) {
-            desktopMenu.classList.add('hidden');
-            authMenu.classList.remove('hidden');
-            document.getElementById('user-greeting').textContent = `Hi, ${state.user.username}`;
-        } else {
-            desktopMenu.classList.remove('hidden');
-            authMenu.classList.add('hidden');
-        }
-    }
-
-    function handleNavigation(e) {
-        e.preventDefault();
-        const targetPage = e.currentTarget.dataset.page;
-        if (targetPage) {
-            // Update URL hash for bookmarking/history
-            window.location.hash = targetPage.replace('page-', '');
-            // The router will handle showing the page
-        }
-    }
-
-    // --- Page Loaders and Logic ---
-    function loadDashboard() {
-        const data = state.user;
-        document.getElementById('welcome-message').textContent = `Welcome, ${data.username}!`;
-        const statusMessage = document.getElementById('status-message');
-        const trialMessage = document.getElementById('trial-usage-message');
-        const startCallBtn = document.getElementById('start-call-btn');
-
-        if (data.is_premium) {
-            statusMessage.innerHTML = `Your <strong>${data.plan} Plan</strong> is active. Enjoy unlimited translations!`;
-            trialMessage.textContent = '';
-            startCallBtn.disabled = false;
-        } else {
-            statusMessage.innerHTML = `You are on the <strong>Free Trial</strong>.`;
-            if (data.trial_count > 0) {
-                trialMessage.innerHTML = `You have <strong>${data.trial_count}</strong> free session(s) remaining. <a href="#payment" data-page="page-payment" class="nav-link text-accent font-bold hover:underline">Upgrade Now</a>.`;
-                startCallBtn.disabled = false;
-            } else {
-                trialMessage.innerHTML = `You have used all your free sessions. <a href="#payment" data-page="page-payment" class="nav-link text-accent font-bold hover:underline">Please upgrade</a>.`;
-                startCallBtn.disabled = true;
-            }
-        }
-        // Re-attach event listeners for dynamically added nav-links inside dashboard
-        document.querySelectorAll('#page-dashboard .nav-link').forEach(link => link.addEventListener('click', handleNavigation));
-    }
-
-    function loadPaymentPage() {
-        const hash = window.location.hash;
-        const planMatch = hash.match(/plan=(\w+)/);
-        const plan = planMatch ? planMatch[1] : 'monthly';
-
-        const plans = {
-            monthly: { name: 'Monthly Plan', amount: 1000, display: '$10' },
-            yearly: { name: 'Yearly Plan', amount: 7000, display: '$70' }
+    function handleLandingPage() {
+        const mainContent = document.getElementById('main-content');
+        
+        const routes = {
+            '': 'template-landing',
+            '#login': 'template-login',
+            '#signup': 'template-signup'
         };
-        const selectedPlan = plans[plan];
 
-        document.getElementById('payment-details').innerHTML = `
-            <h3 class="text-xl font-display font-bold text-primary">${selectedPlan.name}</h3>
-            <p class="text-3xl font-bold text-dark-text mt-2">${selectedPlan.display}</p>
-        `;
-        // Store plan for payment handler
-        document.getElementById('pay-btn').dataset.plan = plan;
-    }
-
-    // --- Router ---
-    async function router() {
-        try {
-            const userData = await apiRequest('/api/user-status/');
-            state.isAuthenticated = true;
-            state.user = userData;
-            showPage('page-dashboard');
-            loadDashboard();
-        } catch (error) {
-            state.isAuthenticated = false;
-            state.user = null;
-            const hash = window.location.hash.split('?')[0];
-            switch (hash) {
-                case '#login': showPage('page-login'); break;
-                case '#signup': showPage('page-signup'); break;
-                case '#payment': 
-                    // Redirect to login if trying to access payment while not authenticated
-                    window.location.hash = 'login';
-                    break;
-                default: showPage('page-landing');
+        function renderView(hash) {
+            const templateId = routes[hash] || routes[''];
+            const template = document.getElementById(templateId);
+            if (template) {
+                mainContent.innerHTML = ''; // Clear previous content
+                mainContent.appendChild(template.content.cloneNode(true));
+                bindEventListenersForView(hash);
             }
         }
-        updateNavUI();
+        
+        function bindEventListenersForView(hash){
+            if (hash === '#login' || hash === ''){
+                const switchToSignup = mainContent.querySelector('#login-switch-to-signup');
+                if(switchToSignup) switchToSignup.addEventListener('click', () => renderView('#signup'));
+                
+                const loginForm = mainContent.querySelector('#login-form');
+                if(loginForm) loginForm.addEventListener('submit', handleLogin);
+            }
+            if (hash === '#signup' || hash === ''){
+                const switchToLogin = mainContent.querySelector('#signup-switch-to-login');
+                if(switchToLogin) switchToLogin.addEventListener('click', () => renderView('#login'));
+                
+                const signupForm = mainContent.querySelector('#signup-form');
+                if(signupForm) signupForm.addEventListener('submit', handleSignup);
+                
+                const heroSignupBtn = mainContent.querySelector('#hero-signup-btn');
+                if(heroSignupBtn) heroSignupBtn.addEventListener('click', () => renderView('#signup'));
+            }
+        }
+        
+        // Navigation button listeners
+        document.getElementById('nav-login-btn').addEventListener('click', (e) => { e.preventDefault(); window.location.hash = '#login'; });
+        document.getElementById('nav-signup-btn').addEventListener('click', (e) => { e.preventDefault(); window.location.hash = '#signup'; });
+        document.getElementById('mobile-nav-login-btn').addEventListener('click', (e) => { e.preventDefault(); window.location.hash = '#login'; });
+        document.getElementById('mobile-nav-signup-btn').addEventListener('click', (e) => { e.preventDefault(); window.location.hash = '#signup'; });
+
+
+        window.addEventListener('hashchange', () => renderView(window.location.hash));
+        renderView(window.location.hash); // Initial render
     }
 
-    // --- Event Handlers ---
-    async function handleAuthForm(e, formId, errorId, endpoint, isLogin = false) {
-        e.preventDefault();
-        const form = document.getElementById(formId);
-        const errorDiv = document.getElementById(errorId);
+    function handleDashboardPage() {
+        apiRequest('/api/user-status/')
+            .then(data => {
+                document.getElementById('welcome-message').textContent = `Welcome, ${data.username}!`;
+                document.getElementById('user-greeting').textContent = `Hi, ${data.username}`;
+                
+                const statusMessage = document.getElementById('status-message');
+                const trialMessage = document.getElementById('trial-usage-message');
+                const startCallBtn = document.getElementById('start-call-btn');
+                
+                if (data.is_premium) {
+                    statusMessage.textContent = `Your ${data.plan} Plan is active.`;
+                    trialMessage.textContent = 'Enjoy unlimited real-time translation sessions.';
+                    startCallBtn.disabled = false;
+                } else {
+                    statusMessage.textContent = 'You are currently on the Free Trial.';
+                    if (data.trial_count > 0) {
+                        trialMessage.innerHTML = `You have <strong>${data.trial_count}</strong> free session(s) remaining.`;
+                        startCallBtn.disabled = false;
+                    } else {
+                        trialMessage.innerHTML = `Your free trial has ended. Please upgrade to continue.`;
+                        startCallBtn.disabled = true;
+                    }
+                }
+            })
+            .catch(() => {
+                // If status check fails, user is not authenticated. Redirect to login.
+                window.location.href = '/#login';
+            });
+            
+        document.getElementById('logout-btn').addEventListener('click', handleLogout);
+        document.getElementById('start-call-btn').addEventListener('click', handleUseTrial);
+    }
+
+    // --- AUTHENTICATION HANDLERS ---
+    async function handleAuth(form, endpoint) {
+        const errorDiv = form.querySelector('.form-error');
         const submitBtn = form.querySelector('button[type="submit"]');
         
         errorDiv.classList.add('hidden');
@@ -155,77 +135,39 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
-        // For login, the field is 'email', not 'username'
-        if(isLogin) data.email = data.email;
 
         try {
             await apiRequest(endpoint, 'POST', data);
-            window.location.hash = 'dashboard';
-            router(); // Re-route to dashboard
+            window.location.href = '/app'; // Redirect to the main app page
         } catch (error) {
             errorDiv.textContent = error.message;
             errorDiv.classList.remove('hidden');
-        } finally {
             submitBtn.disabled = false;
-            submitBtn.textContent = isLogin ? 'Log In' : 'Create Account';
+            submitBtn.textContent = form.id === 'login-form' ? 'Log In' : 'Create Free Account';
         }
     }
+
+    function handleLogin(e) { e.preventDefault(); handleAuth(e.target, '/api/login/'); }
+    function handleSignup(e) { e.preventDefault(); handleAuth(e.target, '/api/signup/'); }
 
     async function handleLogout(e) {
         e.preventDefault();
         try {
             await apiRequest('/api/logout/', 'POST');
-            state.isAuthenticated = false;
-            state.user = null;
-            window.location.hash = '';
-            router(); // Re-route to landing page
+            window.location.href = '/';
         } catch (error) {
             alert('Logout failed. Please try again.');
         }
     }
     
-    async function handlePaystackPayment(e) {
-        const payBtn = e.currentTarget;
-        payBtn.disabled = true;
-        payBtn.textContent = 'Initializing...';
-        const errorDiv = document.getElementById('payment-form-error');
-        errorDiv.classList.add('hidden');
-        
-        try {
-            const plan = payBtn.dataset.plan;
-            const sessionData = await apiRequest('/api/initiate-payment/', 'POST', { plan });
-            
-            const handler = PaystackPop.setup({
-                key: sessionData.paystack_public_key,
-                email: sessionData.email,
-                amount: sessionData.amount,
-                ref: sessionData.reference,
-                callback: function(response) {
-                   window.location.hash = 'dashboard';
-                   router(); // Re-route to show updated status
-                },
-                onClose: function() {
-                   payBtn.disabled = false;
-                   payBtn.textContent = 'Proceed to Secure Payment';
-                }
-            });
-            handler.openIframe();
-
-        } catch (error) {
-            errorDiv.textContent = `Payment failed: ${error.message}`;
-            errorDiv.classList.remove('hidden');
-            payBtn.disabled = false;
-            payBtn.textContent = 'Proceed to Secure Payment';
-        }
-    }
-
+    // --- Dashboard Specific Handlers ---
     async function handleUseTrial(e) {
         const btn = e.currentTarget;
         btn.disabled = true;
         try {
-             const updatedUser = await apiRequest('/api/use-trial/', 'POST');
-             state.user.trial_count = updatedUser.remaining;
-             loadDashboard(); // Reload dashboard UI with new data
+             await apiRequest('/api/use-trial/', 'POST');
+             // Reload to show updated count
+             window.location.reload();
         } catch(error) {
             alert(error.message);
         } finally {
@@ -233,35 +175,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
     
-    // --- Event Listeners ---
-    document.getElementById('signup-form').addEventListener('submit', (e) => handleAuthForm(e, 'signup-form', 'signup-form-error', '/api/signup/'));
-    document.getElementById('login-form').addEventListener('submit', (e) => handleAuthForm(e, 'login-form', 'login-form-error', '/api/login/', true));
-    document.getElementById('logout-btn').addEventListener('click', handleLogout);
-    document.getElementById('pay-btn').addEventListener('click', handlePaystackPayment);
-    document.getElementById('start-call-btn').addEventListener('click', handleUseTrial);
-    
-    navLinks.forEach(link => link.addEventListener('click', handleNavigation));
-
-    mobileMenuButton.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-    });
-    
-    // Listen for hash changes to navigate
-    window.addEventListener('hashchange', () => {
-        // If not authenticated, route to the correct page
-        if (!state.isAuthenticated) {
-            const hash = window.location.hash.split('?')[0];
-            const pageId = `page-${hash.substring(1) || 'landing'}`;
-            showPage(pageId);
-            if (hash.startsWith('#payment')) {
-                loadPaymentPage();
-            }
-        } else {
-             router(); // If authenticated, always re-validate and show dashboard
-        }
-    });
-
-    // --- Initial Load ---
-    router();
+    // Mobile Menu Toggle
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if(mobileMenuButton) {
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
 });
-
