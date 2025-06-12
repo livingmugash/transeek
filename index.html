@@ -3,115 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraTranslate - The Future of Conversation</title>
+    <title>Transeek - The Future of Conversation</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/static/css/style.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { 'sans': ['Poppins', 'sans-serif'] },
-                    colors: {
-                        'luxury-black': '#0D0D0D',
-                        'dazzling-white': '#F5F5F5',
-                        'sky-blue': '#00A9FF',
-                        'light-blue': '#AEE6FF',
-                        'dark-gray': '#1A1A1A',
-                        'medium-gray': '#2A2A2A',
-                    }
-                }
-            }
-        }
-    </script>
+
 </head>
 <body class="bg-luxury-black text-dazzling-white font-sans">
 
     <!-- Header Navigation -->
     <nav class="sticky top-0 z-50 bg-luxury-black/80 backdrop-blur-lg border-b border-medium-gray">
         <div class="container mx-auto flex justify-between items-center p-4">
-            <a href="/" class="font-bold text-2xl tracking-wider">AuraTranslate</a>
+            <a href="/" class="font-bold text-2xl tracking-wider">Transeek</a>
             <div class="hidden md:flex items-center space-x-4">
-                <a href="#login" id="nav-login-btn" class="py-2 px-4 hover:text-sky-blue transition duration-300">Login</a>
-                <a href="#signup" id="nav-signup-btn" class="bg-sky-blue text-luxury-black font-bold py-2 px-6 rounded-lg hover:bg-light-blue transition duration-300">Sign Up Free</a>
+                <a href="#login" class="py-2 px-4 hover:text-sky-blue transition duration-300 nav-link" data-view="login">Login</a>
+                <a href="#signup" class="bg-sky-blue text-luxury-black font-bold py-2 px-6 rounded-lg hover:bg-light-blue transition duration-300 nav-link" data-view="signup">Sign Up Free</a>
             </div>
             <button id="mobile-menu-button" class="md:hidden">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
             </button>
         </div>
         <div id="mobile-menu" class="hidden md:hidden p-4">
-             <a href="#login" id="mobile-nav-login-btn" class="block py-2 px-4 hover:bg-medium-gray rounded">Login</a>
-             <a href="#signup" id="mobile-nav-signup-btn" class="block mt-2 bg-sky-blue text-luxury-black font-bold py-2 px-4 rounded text-center">Sign Up Free</a>
+             <a href="#login" class="block py-2 px-4 hover:bg-medium-gray rounded nav-link" data-view="login">Login</a>
+             <a href="#signup" class="block mt-2 bg-sky-blue text-luxury-black font-bold py-2 px-4 rounded text-center nav-link" data-view="signup">Sign Up Free</a>
         </div>
     </nav>
 
-    <main id="main-content">
-        <!-- The content will be dynamically replaced by JS -->
-    </main>
-    
-    <!-- Landing Page View (Template) -->
-    <template id="template-landing">
-        <div class="page-view">
-            <header class="text-center py-24 md:py-32 px-4 relative overflow-hidden">
-                <div class="absolute inset-0 bg-grid-pattern opacity-10"></div>
-                <div class="relative z-10">
-                    <h1 class="text-5xl md:text-7xl font-bold mb-6 animate-fade-in-down">Your Voice. Any Language.</h1>
-                    <p class="text-lg md:text-xl max-w-3xl mx-auto mb-10 text-gray-300 animate-fade-in-up">Experience the world's first real-time translator that preserves the sound of you. Break language barriers, not connections.</p>
-                    <a href="#signup" id="hero-signup-btn" class="action-button">Start Your Free Trial</a>
+    <main>
+        <!-- This container holds all the different views -->
+        <div id="view-container">
+            <!-- Landing Page Content (Visible by default) -->
+            <div id="view-landing" class="view">
+                <header class="text-center py-24 md:py-32 px-4 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-grid-pattern opacity-10"></div>
+                    <div class="relative z-10">
+                        <h1 class="text-5xl md:text-7xl font-bold mb-6 animate-fade-in-down">Your Voice. Any Language.</h1>
+                        <p class="text-lg md:text-xl max-w-3xl mx-auto mb-10 text-gray-300 animate-fade-in-up">Experience the world's first real-time translator that preserves the sound of you. Break language barriers, not connections.</p>
+                        <a href="#signup" class="action-button nav-link" data-view="signup">Start Your Free Trial</a>
+                    </div>
+                </header>
+
+                <!-- Pricing Section -->
+                <section id="pricing" class="py-20 px-4 bg-dark-gray">
+                    <div class="container mx-auto">
+                        <h2 class="text-4xl font-bold text-center mb-12">Find a Plan That's Right For You</h2>
+                        <div class="flex flex-wrap justify-center items-center gap-8">
+                            <div class="pricing-card">
+                                <h3 class="text-2xl font-bold mb-4">Monthly</h3>
+                                <p class="text-5xl font-bold mb-2">$10<span class="text-lg font-normal text-gray-400">/mo</span></p>
+                                <ul class="text-left my-8 space-y-3 text-gray-300">
+                                    <li>&#10003; Unlimited Translation</li>
+                                    <li>&#10003; Context-Aware AI</li>
+                                    <li>&#10003; Voice-Cloning Enabled</li>
+                                </ul>
+                                <a href="#signup" class="pricing-btn nav-link" data-view="signup">Get Started</a>
+                            </div>
+                            <div class="pricing-card popular">
+                                <p class="popular-badge">Best Value</p>
+                                <h3 class="text-2xl font-bold mb-4">Yearly</h3>
+                                <p class="text-5xl font-bold mb-2">$70<span class="text-lg font-normal text-gray-400">/yr</span></p>
+                                <ul class="text-left my-8 space-y-3">
+                                    <li>&#10003; Unlimited Translation</li>
+                                    <li>&#10003; Context-Aware AI</li>
+                                    <li>&#10003; Voice-Cloning Enabled</li>
+                                    <li>&#10003; Priority Support</li>
+                                </ul>
+                                <a href="#signup" class="pricing-btn-popular nav-link" data-view="signup">Choose Yearly</a>
+                            </div>
+                            <div class="pricing-card">
+                                <h3 class="text-2xl font-bold mb-4">Enterprise</h3>
+                                <p class="text-5xl font-bold mb-2">Custom</p>
+                                <ul class="text-left my-8 space-y-3 text-gray-300">
+                                    <li>&#10003; Everything in Yearly</li>
+                                    <li>&#10003; Dedicated Onboarding</li>
+                                    <li>&#10003; Custom Integrations</li>
+                                </ul>
+                                <a href="#" class="pricing-btn">Contact Sales</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Q&A Section -->
+                <section id="faq" class="py-20 px-4">
+                    <div class="container mx-auto max-w-4xl">
+                        <h2 class="text-4xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+                        <div class="space-y-4">
+                            <div class="faq-item">
+                                <button class="faq-question">
+                                    <span>How is this different from other translators?</span>
+                                    <svg class="faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </button>
+                                <div class="faq-answer">
+                                    <p>While most translators give you a generic, robotic voice, AuraTranslate is the only one that preserves your unique voice characteristics. Our AI analyzes your tone and speaking style, so when you speak English, your friend hears your voice speaking perfect Spanish. It's truly you, just in another language.</p>
+                                </div>
+                            </div>
+                            <div class="faq-item">
+                                <button class="faq-question">
+                                    <span>Will I sound like a robot?</span>
+                                    <svg class="faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </button>
+                                <div class="faq-answer">
+                                    <p>Absolutely not. We've engineered our AI to capture the natural rhythm, intonation, and emotion of your speech. The result is a fluid, human-like conversation that eliminates the awkward, stilted output of older technologies. You'll be amazed at how natural it sounds.</p>
+                                </div>
+                            </div>
+                             <div class="faq-item">
+                                <button class="faq-question">
+                                    <span>Can it handle fast, real-world conversations?</span>
+                                    <svg class="faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </button>
+                                <div class="faq-answer">
+                                    <p>Yes. Our system is built for speed, achieving near-instantaneous translation. It's designed to understand the nuances of real conversation, including local slang, professional jargon, and even when you talk over each other. It keeps up with you, ensuring the conversation never drops.</p>
+                                </div>
+                            </div>
+                             <div class="faq-item">
+                                <button class="faq-question">
+                                    <span>Are my private conversations secure?</span>
+                                    <svg class="faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </button>
+                                <div class="faq-answer">
+                                    <p>Security is our highest priority. All data is protected with enterprise-grade encryption from end to end. Your voice data is used only for the real-time translation and is never stored or used for any other purpose. Your conversations are, and always will be, yours alone.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Login Form View (Initially Hidden) -->
+            <div id="view-login" class="view hidden">
+                <div class="auth-container animate-fade-in">
+                    <div class="auth-card">
+                        <h2 class="text-3xl font-bold text-center mb-8">Welcome Back</h2>
+                        <form id="login-form" novalidate>
+                            <div id="login-form-error" class="form-error hidden"></div>
+                            <div class="form-group">
+                                <input type="email" name="email" class="form-input" placeholder="Email Address" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="password" name="password" class="form-input" placeholder="Password" required>
+                            </div>
+                            <button type="submit" class="action-button w-full">Log In</button>
+                        </form>
+                        <p class="text-center text-sm mt-6 text-gray-400">
+                            No account? <a href="#signup" class="font-semibold text-sky-blue hover:underline nav-link" data-view="signup">Sign up for free</a>
+                        </p>
+                    </div>
                 </div>
-            </header>
-            <!-- Other sections of landing page can be added here -->
-        </div>
-    </template>
+            </div>
 
-    <!-- Login Form View (Template) -->
-    <template id="template-login">
-        <div class="page-view auth-container animate-fade-in">
-            <div class="auth-card">
-                <h2 class="text-3xl font-bold text-center mb-8">Welcome Back</h2>
-                <form id="login-form" novalidate>
-                    <div id="login-form-error" class="form-error hidden"></div>
-                    <div class="form-group">
-                        <input type="email" name="email" class="form-input" placeholder="Email Address" required>
+            <!-- Signup Form View (Initially Hidden) -->
+            <div id="view-signup" class="view hidden">
+                 <div class="auth-container animate-fade-in">
+                    <div class="auth-card">
+                        <h2 class="text-3xl font-bold text-center mb-8">Create Your Account</h2>
+                        <form id="signup-form" novalidate>
+                             <div id="signup-form-error" class="form-error hidden"></div>
+                            <div class="form-group">
+                                <input type="text" name="username" class="form-input" placeholder="Username" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" name="email" class="form-input" placeholder="Email Address" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="password" name="password" class="form-input" placeholder="Password" required>
+                            </div>
+                            <button type="submit" class="action-button w-full">Create Free Account</button>
+                        </form>
+                        <p class="text-center text-sm mt-6 text-gray-400">
+                            Already have an account? <a href="#login" class="font-semibold text-sky-blue hover:underline nav-link" data-view="login">Log In</a>
+                        </p>
                     </div>
-                    <div class="form-group">
-                        <input type="password" name="password" class="form-input" placeholder="Password" required>
-                    </div>
-                    <button type="submit" class="action-button w-full">Log In</button>
-                </form>
-                <p class="text-center text-sm mt-6 text-gray-400">
-                    No account? <a href="#signup" id="login-switch-to-signup" class="font-semibold text-sky-blue hover:underline">Sign up for free</a>
-                </p>
+                </div>
             </div>
         </div>
-    </template>
-
-    <!-- Signup Form View (Template) -->
-    <template id="template-signup">
-        <div class="page-view auth-container animate-fade-in">
-             <div class="auth-card">
-                <h2 class="text-3xl font-bold text-center mb-8">Create Your Account</h2>
-                <form id="signup-form" novalidate>
-                     <div id="signup-form-error" class="form-error hidden"></div>
-                    <div class="form-group">
-                        <input type="text" name="username" class="form-input" placeholder="Username" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" name="email" class="form-input" placeholder="Email Address" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" name="password" class="form-input" placeholder="Password" required>
-                    </div>
-                    <button type="submit" class="action-button w-full">Create Free Account</button>
-                </form>
-                <p class="text-center text-sm mt-6 text-gray-400">
-                    Already have an account? <a href="#login" id="signup-switch-to-login" class="font-semibold text-sky-blue hover:underline">Log In</a>
-                </p>
-            </div>
-        </div>
-    </template>
+    </main>
     
     <footer class="bg-dark-gray border-t border-medium-gray mt-12">
         <div class="container mx-auto text-center p-6 text-gray-400">
@@ -122,3 +189,4 @@
     <script src="/static/js/main.js"></script>
 </body>
 </html>
+
